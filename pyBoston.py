@@ -76,7 +76,8 @@ def multivariate_lreg(dFrame, feature_list, target_arr):
     # set a new column
     print(coeff_df)
 
-def cross_validation_fit_predict(dFrame, feature_list, target_arr):
+
+def cross_validation_fit_predict(dFrame, feature_list, target_arr, train_ratio=0.9):
     """cross validation for fitting and prediction, including
     splitting data into training and validation"""
 
@@ -85,7 +86,7 @@ def cross_validation_fit_predict(dFrame, feature_list, target_arr):
     # split the data (Xn-Y) pairs for training and validation
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(dFrame.drop('TARGET',1),
                                                                          target_arr,
-                                                                         train_size=0.9)
+                                                                         train_size=train_ratio)
 
     # now that we have all the pair of train-test data, we can start the normal fitting and validation
     print('shape of train-test data: ', X_train.shape, X_test.shape, Y_train.shape, Y_test.shape)
@@ -96,26 +97,43 @@ def cross_validation_fit_predict(dFrame, feature_list, target_arr):
     # fit
     lreg.fit(X_train, Y_train)
 
+    # shoe each feature's coefficien
+    df_coef = pd.DataFrame(data=lreg.coef_, columns=['Reg_Coefficient'], index=feature_list)
+    print('feature coefficients: \n', df_coef)
+
+    # predict
+    pred_train = lreg.predict(X_train)
+    pred_test = lreg.predict(X_test)
+
+    # get the error
+    err_train = (pred_train - Y_train) ** 2
+    err_test = (pred_test - Y_test) ** 2
+
+    # print average err
+    print('average squared error for trained: %.2f' % np.mean(err_train))
+    print('average squared error for test: %.2f' % np.mean(err_test))
+
 
 def main():
     # 1. load the database
     boston = load_boston()
 
     # 2. create dataframe out of boston data
-    df_boston = pd.DataFrame(boston.data, columns=boston.feature_names)
-    df_boston['TARGET'] = pd.Series(boston.target)
+    df_boston = pd.DataFrame(boston['data'], columns=boston['feature_names'])
+    df_boston['TARGET'] = pd.Series(boston['target'])
 
     # 3. perform linear regression (univariate)
     # univariate_lreg(df_boston, df_boston.columns, df_boston['TARGET'])
 
     # 4. perform multivariate regression (multivariate)
-    multivariate_lreg(df_boston, df_boston.columns, df_boston['TARGET'])
+    # multivariate_lreg(df_boston, df_boston.columns, df_boston['TARGET'])
 
     # 5. cross validation
-    cross_validation_fit_predict(df_boston, df_boston.columns, df_boston['TARGET'])
+    cross_validation_fit_predict(df_boston, df_boston.columns[:-1], df_boston['TARGET'], train_ratio=0.9)
 
     # do this last
     plt.show()
+
 
 if __name__ == "__main__":
     main()
