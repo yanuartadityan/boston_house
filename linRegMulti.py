@@ -85,7 +85,7 @@ class UnivariateLinReg(Common):
         # plot number of rooms vs house prices
         plt.figure(0)
         plt.plot(self.X, self.y_data._values, 'o')
-        # plt.plot(self.X, self.coefficient*self.X + self.intercept, 'r', label='Best fit line')
+        plt.plot(self.X, self.coefficient*self.X + self.intercept, 'r', label='Best fit line')
         plt.title('Best fit line is f(X) = %.2fX + %.2f' % (self.coefficient, self.intercept))
         plt.xlabel('Number of rooms')
         plt.ylabel('House prices in $1000')
@@ -110,6 +110,12 @@ class CrossValidationLinReg(Common):
             self.target_data = target_data
         else:
             raise ValueError('target_data must not be None type')
+
+        # target Y
+        if isinstance(target_data, pd.Series):
+            self.y_data = target_data
+        else:
+            self.y_data = pd.Series(target_data)
 
         # split train data and test data
         self.perform_regression()

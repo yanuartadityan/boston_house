@@ -44,5 +44,5 @@ def main_with_class():
 
 
 if __name__ == "__main__":
-    main_univariate_with_class()
-    # main_with_class()
+    # main_univariate_with_class()
+    main_with_class()
