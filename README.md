@@ -28,7 +28,7 @@ There are 13 features are gonna be used according to the database which you can 
 
 In the project, each features regression coefficient will be evaluated to see how relevant they are to build the best predictor.
 
-## More...
+## Submission
 
-More updates to come...
+While the submission for the competition has been closed, but late submission was still accepted. Current best with using Random Forest Regression gave me *RMSE* of *$4.63* on the submission, sitting just at 60th. Pretty okay for just a small learning project.
 
